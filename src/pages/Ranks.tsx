@@ -80,7 +80,7 @@ export default function Ranks() {
               <Title>Mais Dias Únicos com Vendas</Title>
               {data.maiorDiasUnicos ? (
                 <>
-                  <Info><strong>Cliente:</strong> {data.maiorDiasUnicos.client_id}</Info>
+                  <Info><strong>Cliente:</strong> {data.maiorDiasUnicos.client_name || data.maiorDiasUnicos.client_id}</Info>
                   <Info><strong>Dias únicos:</strong> {data.maiorDiasUnicos.diasUnicos}</Info>
                 </>
               ) : <Info>Nenhum dado.</Info>}
