@@ -29,6 +29,10 @@ const Info = styled.p`
   margin: 0.5rem 0;
 `;
 
+function formatReal(valor: number) {
+  return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+}
+
 export default function Ranks() {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -63,7 +67,7 @@ export default function Ranks() {
               {data.maiorVolume ? (
                 <>
                   <Info><strong>Cliente:</strong> {data.maiorVolume.client_name || data.maiorVolume.client_id}</Info>
-                  <Info><strong>Total vendido:</strong> {data.maiorVolume._sum?.value}</Info>
+                  <Info><strong>Total vendido:</strong> {formatReal(data.maiorVolume._sum?.value ?? 0)}</Info>
                 </>
               ) : <Info>Nenhum dado.</Info>}
             </Card>
@@ -72,7 +76,7 @@ export default function Ranks() {
               {data.maiorMedia ? (
                 <>
                   <Info><strong>Cliente:</strong> {data.maiorMedia.client_name || data.maiorMedia.client_id}</Info>
-                  <Info><strong>Média:</strong> {data.maiorMedia._avg?.value}</Info>
+                  <Info><strong>Média:</strong> {formatReal(data.maiorMedia._avg?.value ?? 0)}</Info>
                 </>
               ) : <Info>Nenhum dado.</Info>}
             </Card>

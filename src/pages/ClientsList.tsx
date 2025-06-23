@@ -19,8 +19,14 @@ const List = styled.ul`
 `;
 
 const ListItem = styled.li`
-  margin-bottom: 1rem;
+  margin-bottom: 2rem;
   font-size: 1.1rem;
+`;
+
+const SalesList = styled.ul`
+  margin-top: 0.5rem;
+  margin-bottom: 0;
+  padding-left: 1.5rem;
 `;
 
 const Input = styled.input`
@@ -32,8 +38,30 @@ const Input = styled.input`
   width: 100%;
 `;
 
+interface Venda {
+  data: string;
+  valor: number;
+}
+
+interface Cliente {
+  info: {
+    nomeCompleto: string;
+    detalhes: {
+      email: string;
+      nascimento: string;
+    };
+  };
+  estatisticas: {
+    vendas: Venda[];
+  };
+}
+
+function formatReal(valor: number) {
+  return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+}
+
 export default function ClientsList() {
-  const [clients, setClients] = useState<any[]>([]);
+  const [clientes, setClientes] = useState<Cliente[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [name, setName] = useState("");
@@ -46,7 +74,7 @@ export default function ClientsList() {
       try {
         const params = name ? { name } : {};
         const response = await api.get("/clients/search", { params });
-        if (!ignore) setClients(response.data);
+        if (!ignore) setClientes(response.data.clientes);
       } catch {
         if (!ignore) setError("Erro ao buscar clientes.");
       } finally {
@@ -71,12 +99,23 @@ export default function ClientsList() {
         {error && <p style={{ color: '#c00' }}>{error}</p>}
         {!loading && !error && (
           <List>
-            {clients.length === 0 && <li>Nenhum cliente encontrado.</li>}
-            {clients.map((client, idx) => (
+            {clientes.length === 0 && <li>Nenhum cliente encontrado.</li>}
+            {clientes.map((cliente, idx) => (
               <ListItem key={idx}>
-                <strong>Nome:</strong> {client.name} <br />
-                <strong>Email:</strong> {client.email} <br />
-                <strong>Nascimento:</strong> {client.birth}
+                <strong>Nome:</strong> {cliente.info.nomeCompleto} <br />
+                <strong>Email:</strong> {cliente.info.detalhes.email} <br />
+                <strong>Nascimento:</strong> {cliente.info.detalhes.nascimento}
+                <SalesList>
+                  {cliente.estatisticas.vendas.length === 0 ? (
+                    <li>Nenhuma venda registrada.</li>
+                  ) : (
+                    cliente.estatisticas.vendas.map((venda, vIdx) => (
+                      <li key={vIdx}>
+                        <strong>Data:</strong> {venda.data} | <strong>Valor:</strong> {formatReal(venda.valor)}
+                      </li>
+                    ))
+                  )}
+                </SalesList>
               </ListItem>
             ))}
           </List>
